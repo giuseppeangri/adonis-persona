@@ -42,6 +42,7 @@ class Persona {
       email: 'email',
       password: 'password',
       model: 'App/Models/User',
+      accountStateColumn: 'account_status',
       newAccountState: 'pending',
       verifiedAccountState: 'active',
       dateFormat: 'YYYY-MM-DD HH:mm:ss'
@@ -368,7 +369,7 @@ class Persona {
    */
   massageRegisterationData (payload) {
     delete payload[this._passwordConfirmationField]
-    payload.account_status = this.config.newAccountState
+    payload[this.config.accountStateColumn] = this.config.newAccountState
   }
 
   /**
@@ -557,8 +558,8 @@ class Persona {
     /**
      * Update user account only when in the newAccountState
      */
-    if (user.account_status === this.config.newAccountState) {
-      user.account_status = this.config.verifiedAccountState
+    if (user[this.config.accountStateColumn] === this.config.newAccountState) {
+      user[this.config.accountStateColumn] = this.config.verifiedAccountState
       await user.save()
       await this.removeToken(token, 'email')
     }
@@ -595,7 +596,7 @@ class Persona {
     /**
      * Updating user details
      */
-    user.account_status = this.config.newAccountState
+    user[this.config.accountStateColumn] = this.config.newAccountState
     this._setEmail(user, newEmail)
     await user.save()
 
